@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -181,93 +182,9 @@ public class WiFiChatFragment extends Fragment {
 
         viewReceviedMessage(view);
 
-        handleButton(view);
-
         handleBluetoothBtn(view);
 
-
-//        CheckBox    test= (CheckBox)view.findViewById(R.id.checkBox2);
-//
-//        test.setOnClickListener(
-//                new View.OnClickListener(){
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (chatManager != null) {
-//                            if (!chatManager.isDisable()) {
-//                                Log.d(TAG, "chatmanager state: enable");
-//
-//                                //send message to the ChatManager's outputStream.
-//                                chatManager.write("Turn On/Off".getBytes());
-//                            } else {
-//                                Log.d(TAG, "chatmanager disabled, trying to send a message with tabNum= " + tabNumber);
-//
-//                                addToWaitingToSendQueueAndTryReconnect();
-//                            }
-//                        } else {
-//                            Log.d(TAG, "chatmanager is null");
-//                        }
-//                    }
-//                }
-//        );
-//
-//        SeekBar seekBar= (SeekBar)view.findViewById(R.id.seekBar);
-//        seekBar.setOnSeekBarChangeListener(
-//                new SeekBar.OnSeekBarChangeListener(){
-//
-//                    @Override
-//                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                        if (chatManager != null) {
-//                            if (!chatManager.isDisable()) {
-//                                Log.d(TAG, "chatmanager state: enable");
-//
-//                                //send message to the ChatManager's outputStream.
-//                                chatManager.write((Integer.toString(progress)).getBytes());
-//                            } else {
-//                                Log.d(TAG, "chatmanager disabled, trying to send a message with tabNum= " + tabNumber);
-//
-//                                addToWaitingToSendQueueAndTryReconnect();
-//                            }
-//
-//                        } else {
-//                            Log.d(TAG, "chatmanager is null");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//                    }
-//                }
-//        );
-//
-//        view.findViewById(R.id.swithOff).setOnClickListener(
-//                new View.OnClickListener(){
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (chatManager != null) {
-//                            if (!chatManager.isDisable()) {
-//                                Log.d(TAG, "chatmanager state: enable");
-//
-//                                //send message to the ChatManager's outputStream.
-//                                chatManager.write("Turn On/Off".getBytes());
-//                            } else {
-//                                Log.d(TAG, "chatmanager disabled, trying to send a message with tabNum= " + tabNumber);
-//
-//                                addToWaitingToSendQueueAndTryReconnect();
-//                            }
-//                        } else {
-//                            Log.d(TAG, "chatmanager is null");
-//                        }
-//                    }
-//                }
-//        );
+        handleSoundProfile(view);
 
         handleScreenBrigthness(view);
 
@@ -282,30 +199,35 @@ public class WiFiChatFragment extends Fragment {
 
     }
 
-    public void setToggleButton(String button) {
-        ringer.toggle();
+    public void setMessage(String message){
+        receviedMessage.setText(message);
     }
 
-    public void handleButton(View view){
+    public void setSoundProfile(String button) {
+        Log.d("SP",button);
+        if(button.contains("Silent")){
+            ringer.setChecked(false);
+        }else if (button.contains("Loud")){
+            ringer.setChecked(true);
+        }else{
+//            ringer.toggle();
+        }
+    }
+
+    public void handleSoundProfile(View view){
         ringer = (ToggleButton) view.findViewById(R.id.toggleButton);
 
         mobilemode= (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        ringer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
 
-        ringer.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-
-                if(ringer.getText().toString().equals("Silent"))
-                {
-                    mobilemode.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-
-                }
-                else if(ringer.getText().toString().equals("Loud"))
-                {
                     mobilemode.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                } else {
+                    // The toggle is disabled
+                    mobilemode.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
-
             }
         });
     }
@@ -313,30 +235,33 @@ public class WiFiChatFragment extends Fragment {
     public void handleBluetoothBtn(View view){
         bluetooth = (ToggleButton) view.findViewById(R.id.bluetoothButton);
 
-        bluetooth.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-
-                if( !bluetoothAdaper.isEnabled( ) )
-                {
-                    bluetoothAdaper.enable( );
-                }else{
-                    bluetoothAdaper.disable();
+        bluetooth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    if(!bluetoothAdaper.isEnabled()){
+                        bluetoothAdaper.enable();
+                    }
+                } else {
+                    // The toggle is disabled
+                    if(bluetoothAdaper.isEnabled()){
+                        bluetoothAdaper.disable();
+                    }
                 }
-
-
-
             }
         });
     }
 
     public void setBluetooth(String blue){
-        bluetoothAdaper.enable();
-    }
+        Log.d("SB",blue);
+        if(blue.contains("OFF")){
+            ringer.setChecked(false);
+        }else if (blue.contains("ON")){
+            ringer.setChecked(true);
+        }else{
+//            ringer.toggle();
+        }
 
-    public void setMessage(String message){
-        receviedMessage.setText(message);
     }
 
     public void handleScreenBrigthness(View view){

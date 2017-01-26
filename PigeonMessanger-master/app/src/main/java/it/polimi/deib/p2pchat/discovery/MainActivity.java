@@ -730,7 +730,7 @@ public class MainActivity extends ActionBarActivity implements
                             if(readMessage.contains("SP - ")){
                                 //case   Sound Profile ... so call changeSoundProfile;
                                 readMessage=readMessage.split(" - ")[1];
-                                tabFragment.getChatFragmentByTab(tabNum).setToggleButton(readMessage);
+                                tabFragment.getChatFragmentByTab(tabNum).setSoundProfile(readMessage);
                             }else if(readMessage.contains("SB - ")){
                                 //case   Screen Brightness  ... so call changeBrightness;
                                 readMessage=readMessage.split(" - ")[1];
