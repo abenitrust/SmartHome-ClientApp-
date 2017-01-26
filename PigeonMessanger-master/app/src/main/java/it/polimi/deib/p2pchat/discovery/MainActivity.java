@@ -720,16 +720,26 @@ public class MainActivity extends ActionBarActivity implements
                             readMessage = readMessage.replace("+", "");
                             readMessage = readMessage.replace(Configuration.MAGICADDRESSKEYWORD, "Mac Address");
                         }
-//                        tabFragment.getChatFragmentByTab(tabNum).pushMessage("Device: " + readMessage);
+
+                        //Check the message Here ....
+                        // Agreement ...   BR - integer  > BrightnessControl
+                        //                 BL ->  ON/OFF > Bluetooth control
+                        //                 PR -> Loud/Silent > Sound Profile
+                        //                 GP -> GPS
+                        //
+                        tabFragment.getChatFragmentByTab(tabNum).setMessage("Device: " + readMessage);
+                        tabFragment.getChatFragmentByTab(tabNum).changeBrigthness(readMessage);
+                        tabFragment.getChatFragmentByTab(tabNum).setToggleButton(readMessage);
+
                     } else {
                         if (!readMessage.contains(Configuration.MAGICADDRESSKEYWORD)) {
-//                            tabFragment.getChatFragmentByTab(tabNum).pushMessage("Device: " + readMessage);
+                            tabFragment.getChatFragmentByTab(tabNum).setMessage("Device: " + readMessage);
                         }
                     }
 
                     //if the WaitingToSendQueue is not empty, send all his messages to target device.
 //                    if (!WaitingToSendQueue.getInstance().getWaitingToSendItemsList(tabNum).isEmpty()) {
-                        tabFragment.getChatFragmentByTab(tabNum).sendForcedWaitingToSendQueue();
+//                        tabFragment.getChatFragmentByTab(tabNum).sendForcedWaitingToSendQueue();
 //                    }
                 } else {
                     Log.e("handleMessage", "Error tabNum = " + tabNum + " because is <=0");
