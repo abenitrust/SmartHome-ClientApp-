@@ -1,5 +1,5 @@
 
-package it.polimi.deib.p2pchat.discovery;
+package it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery;
 
 /*
  * Copyright (C) 2011 The Android Open Source Project
@@ -18,7 +18,6 @@ package it.polimi.deib.p2pchat.discovery;
  * limitations under the License.
  */
 
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -33,12 +32,10 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,31 +45,28 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import it.polimi.deib.p2pchat.R;
-
-import it.polimi.deib.p2pchat.discovery.actionlisteners.CustomDnsSdTxtRecordListener;
-import it.polimi.deib.p2pchat.discovery.actionlisteners.CustomDnsServiceResponseListener;
-import it.polimi.deib.p2pchat.discovery.actionlisteners.CustomizableActionListener;
-import it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment;
-import it.polimi.deib.p2pchat.discovery.chatmessages.messagefilter.MessageException;
-import it.polimi.deib.p2pchat.discovery.chatmessages.messagefilter.MessageFilter;
-
-import it.polimi.deib.p2pchat.discovery.model.LocalP2PDevice;
-import it.polimi.deib.p2pchat.discovery.model.P2pDestinationDevice;
-import it.polimi.deib.p2pchat.discovery.services.ServiceList;
-import it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.polimi.deib.p2pchat.discovery.services.WiFiP2pService;
-import it.polimi.deib.p2pchat.discovery.services.WiFiServicesAdapter;
-import it.polimi.deib.p2pchat.discovery.socketmanagers.ChatManager;
-import it.polimi.deib.p2pchat.discovery.socketmanagers.ClientSocketHandler;
-import it.polimi.deib.p2pchat.discovery.socketmanagers.GroupOwnerSocketHandler;
+import it.polimi.deib.p2pchat.R;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.actionlisteners.CustomDnsSdTxtRecordListener;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.actionlisteners.CustomDnsServiceResponseListener;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.actionlisteners.CustomizableActionListener;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.chatmessages.WiFiChatFragment;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.chatmessages.messagefilter.MessageException;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.chatmessages.messagefilter.MessageFilter;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.model.LocalP2PDevice;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.model.P2pDestinationDevice;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.services.ServiceList;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.services.WiFiP2pService;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.services.WiFiP2pServicesFragment;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.services.WiFiServicesAdapter;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.socketmanagers.ChatManager;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.socketmanagers.ClientSocketHandler;
+import it.polimi.deib.p2pchat.discovery.chatmessages.waitingtosend.discovery.socketmanagers.GroupOwnerSocketHandler;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -119,7 +113,7 @@ public class MainActivity extends ActionBarActivity implements
     static final int WRITE_SETTINGS = 1;
 
     /**
-     * Method to get the {@link android.os.Handler}.
+     * Method to get the {@link Handler}.
      *
      * @return The handler.
      */
@@ -130,11 +124,11 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Method called by WiFiChatFragment using the
-     * {@link it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment.AutomaticReconnectionListener}
+     * {@link WiFiChatFragment.AutomaticReconnectionListener}
      * interface, implemented here, by this class.
      * If the wifiP2pService is null, this method return directly, without doing anything.
      *
-     * @param service A {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pService}
+     * @param service A {@link WiFiP2pService}
      *                object that represents the device in which you want to connect.
      */
     @Override
@@ -172,7 +166,7 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Method that force to stop the discovery phase of the wifi direct protocol, clear
-     * the {@link it.polimi.deib.p2pchat.discovery.services.ServiceList}, update the
+     * the {@link ServiceList}, update the
      * discovery's menu item and remove all the registered Services.
      */
     public void forceDiscoveryStop() {
@@ -232,7 +226,7 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Method to discover services and put the results
-     * in {@link it.polimi.deib.p2pchat.discovery.services.ServiceList}.
+     * in {@link ServiceList}.
      * This method updates also the discovery menu item.
      */
     private void discoverService() {
@@ -284,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Method to notifyDataSetChanged to the adapter of the
-     * {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment}.
+     * {@link WiFiP2pServicesFragment}.
      */
     private void updateServiceAdapter() {
         WiFiP2pServicesFragment fragment = TabFragment.getWiFiP2pServicesFragment();
@@ -337,7 +331,7 @@ public class MainActivity extends ActionBarActivity implements
     /**
      * Method to disconnect and restart discovery, used by the MenuItem icon.
      * This method tries to remove the WifiP2pGroup.
-     * If onSuccess, its clear the {@link it.polimi.deib.p2pchat.discovery.services.ServiceList},
+     * If onSuccess, its clear the {@link ServiceList},
      * completely stops the discovery phase and, at the end, restarts registration and discovery.
      * Finally this method updates the adapter
      */
@@ -400,7 +394,7 @@ public class MainActivity extends ActionBarActivity implements
     /**
      * Method that connects to the specified service.
      *
-     * @param service The {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pService}
+     * @param service The {@link WiFiP2pService}
      *                to which you want to connect.
      */
     private void connectP2p(WiFiP2pService service) {
@@ -442,16 +436,16 @@ public class MainActivity extends ActionBarActivity implements
 
 
     /**
-     * Method called by {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment}
-     * with the {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment.DeviceClickListener}
+     * Method called by {@link WiFiP2pServicesFragment}
+     * with the {@link WiFiP2pServicesFragment.DeviceClickListener}
      * interface, when the user click on an element of the recyclerview.
-     * To be precise, the call comes from {@link it.polimi.deib.p2pchat.discovery.services.WiFiServicesAdapter} to the
-     * {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment} using
-     * {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment.DeviceClickListener} to
+     * To be precise, the call comes from {@link WiFiServicesAdapter} to the
+     * {@link WiFiP2pServicesFragment} using
+     * {@link WiFiP2pServicesFragment.DeviceClickListener} to
      * check if the clickedPosition is correct and finally calls this method.
      *
      * @param position int that represents the lists's clicked position inside
-     *                 the {@link it.polimi.deib.p2pchat.discovery.services.WiFiP2pServicesFragment}
+     *                 the {@link WiFiP2pServicesFragment}
      */
     public void tryToConnectToAService(int position) {
         WiFiP2pService service = ServiceList.getInstance().getElementByPosition(position);
@@ -469,7 +463,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
-     * Method to send the {@link it.polimi.deib.p2pchat.discovery.Configuration}.MAGICADDRESSKEYWORD with the macaddress
+     * Method to send the {@link Configuration}.MAGICADDRESSKEYWORD with the macaddress
      * of this device to the other device.
      *
      * @param deviceMacAddress String that represents the macaddress of the destination device.
@@ -496,10 +490,10 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
-     * Method to disable all {@link it.polimi.deib.p2pchat.discovery.socketmanagers.ChatManager}'s.
+     * Method to disable all {@link ChatManager}'s.
      * This method iterates over all ChatManagers inside
-     * the {@link it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment}'s list
-     * (in {@link it.polimi.deib.p2pchat.discovery.TabFragment} ) and calls "setDisable(true);".
+     * the {@link WiFiChatFragment}'s list
+     * (in {@link TabFragment} ) and calls "setDisable(true);".
      */
     public void setDisableAllChatManagers() {
         for (WiFiChatFragment chatFragment : TabFragment.getWiFiChatFragmentList()) {
@@ -511,7 +505,7 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Method to set the current item of the {@link android.support.v4.view.ViewPager} used
-     * in {@link it.polimi.deib.p2pchat.discovery.TabFragment}.
+     * in {@link TabFragment}.
      *
      * @param numPage int that represents the index of the tab to show.
      */
@@ -524,14 +518,14 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * This Method changes the color of all messages in
-     * {@link it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment}.
+     * {@link WiFiChatFragment}.
      *
      * @param grayScale a boolean that if is true removes all colors inside
-     *                  {@link it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment},
+     *                  {@link WiFiChatFragment},
      *                  if false activates all colors only in the active
-     *                  {@link it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment},
+     *                  {@link WiFiChatFragment},
      *                  based on the value of tabNum to select the correct tab in
-     *                  {@link it.polimi.deib.p2pchat.discovery.TabFragment}.
+     *                  {@link TabFragment}.
      */
     public void addColorActiveTabs(boolean grayScale) {
         Log.d(TAG, "addColorActiveTabs() called, tabNum= " + tabNum);
@@ -544,7 +538,7 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
-     * This method sets the name of this {@link it.polimi.deib.p2pchat.discovery.model.LocalP2PDevice}
+     * This method sets the name of this {@link LocalP2PDevice}
      * in the UI and inside the device. In this way, all other devices can see this updated name during the discovery phase.
      * Attention, WifiP2pManager uses an annotation called @hide to hide the method setDeviceName, in Android SDK.
      * This method uses Java reflection to call this hidden method.
@@ -555,8 +549,8 @@ public class MainActivity extends ActionBarActivity implements
         try {
             Method m = manager.getClass().getMethod(
                     "setDeviceName",
-                    new Class[]{WifiP2pManager.Channel.class, String.class,
-                            WifiP2pManager.ActionListener.class});
+                    new Class[]{Channel.class, String.class,
+                            ActionListener.class});
 
             m.invoke(manager, channel, deviceName,
                     new CustomizableActionListener(
@@ -573,8 +567,8 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
-     * Method to setup the {@link android.support.v7.widget.Toolbar}
-     * as supportActionBar in this {@link android.support.v7.app.ActionBarActivity}.
+     * Method to setup the {@link Toolbar}
+     * as supportActionBar in this {@link ActionBarActivity}.
      */
     private void setupToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -632,7 +626,7 @@ public class MainActivity extends ActionBarActivity implements
 
     /**
      * Method called automatically by Android when
-     * {@link it.polimi.deib.p2pchat.discovery.socketmanagers.ChatManager}
+     * {@link ChatManager}
      * calls handler.obtainMessage(***).sendToTarget().
      */
     @Override
@@ -719,37 +713,18 @@ public class MainActivity extends ActionBarActivity implements
                         if (readMessage.contains(Configuration.MAGICADDRESSKEYWORD)) {
                             readMessage = readMessage.replace("+", "");
                             readMessage = readMessage.replace(Configuration.MAGICADDRESSKEYWORD, "Mac Address");
-                        }else{
-                            //Check the message Here ....
-                            // Agreement ...   SB - integer  > BrightnessControl
-                            //                 BL ->  ON/OFF > Bluetooth control
-                            //                 SP -> Loud/Silent > Sound Profile
-                            //                 GP -> GPS
-                            //
-
-                            if(readMessage.contains("SP - ")){
-                                //case   Sound Profile ... so call changeSoundProfile;
-                                readMessage=readMessage.split(" - ")[1];
-                                tabFragment.getChatFragmentByTab(tabNum).setToggleButton(readMessage);
-                            }else if(readMessage.contains("SB - ")){
-                                //case   Screen Brightness  ... so call changeBrightness;
-                                readMessage=readMessage.split(" - ")[1];
-                                tabFragment.getChatFragmentByTab(tabNum).changeBrigthness(readMessage);
-                            }else if(readMessage.contains("BL -")){
-                                //case Bluetooth ... so call changeBluetooth;
-                                readMessage=readMessage.split(" - ")[1];
-                            }else if(readMessage.contains("GP - ")){
-                                //case GPS  ... so call changeBluetooth
-                                readMessage=readMessage.split(" - ")[1];
-                            }else{
-                                //Unknown command so  do nothing
-                            }
-
-
                         }
 
-
+                        //Check the message Here ....
+                        // Agreement ...   BR - integer  > BrightnessControl
+                        //                 BL ->  ON/OFF > Bluetooth control
+                        //                 PR -> Loud/Silent > Sound Profile
+                        //                 GP -> GPS
+                        //
                         tabFragment.getChatFragmentByTab(tabNum).setMessage("Device: " + readMessage);
+                        tabFragment.getChatFragmentByTab(tabNum).changeBrigthness(readMessage);
+                        tabFragment.getChatFragmentByTab(tabNum).setToggleButton(readMessage);
+
                     } else {
                         if (!readMessage.contains(Configuration.MAGICADDRESSKEYWORD)) {
                             tabFragment.getChatFragmentByTab(tabNum).setMessage("Device: " + readMessage);
@@ -769,14 +744,14 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
-     * Method to select the correct tab {@link it.polimi.deib.p2pchat.discovery.chatmessages.WiFiChatFragment}
-     * in {@link it.polimi.deib.p2pchat.discovery.TabFragment}
+     * Method to select the correct tab {@link WiFiChatFragment}
+     * in {@link TabFragment}
      * and to prepare and to initialize everything to make chatting possible.
      * </br>
      * This is a critical method. Don't remove the Log.d messages.
      *
-     * @param p2pDevice {@link it.polimi.deib.p2pchat.discovery.model.P2pDestinationDevice} that represent
-     *                  the device from the string message obtained in {@link #handleMessage(android.os.Message)} in
+     * @param p2pDevice {@link P2pDestinationDevice} that represent
+     *                  the device from the string message obtained in {@link #handleMessage(Message)} in
      *                  {@code case Configuration.MESSAGE_READ}.
      */
     private void manageAddressMessageReception(P2pDestinationDevice p2pDevice) {
