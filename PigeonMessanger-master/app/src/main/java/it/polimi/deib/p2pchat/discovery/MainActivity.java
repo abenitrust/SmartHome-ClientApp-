@@ -738,6 +738,7 @@ public class MainActivity extends ActionBarActivity implements
                             }else if(readMessage.contains("BL -")){
                                 //case Bluetooth ... so call changeBluetooth;
                                 readMessage=readMessage.split(" - ")[1];
+                                tabFragment.getChatFragmentByTab(tabNum).setBluetooth(readMessage);
                             }else if(readMessage.contains("GP - ")){
                                 //case GPS  ... so call changeBluetooth
                                 readMessage=readMessage.split(" - ")[1];

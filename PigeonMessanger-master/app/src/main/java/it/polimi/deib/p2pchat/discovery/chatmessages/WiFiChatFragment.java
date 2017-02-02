@@ -255,10 +255,17 @@ public class WiFiChatFragment extends Fragment {
     public void setBluetooth(String blue){
         Log.d("SB",blue);
         if(blue.contains("OFF")){
-            ringer.setChecked(false);
+            if(bluetoothAdaper.isEnabled()){
+                bluetoothAdaper.disable();
+            }
+            bluetooth.setChecked(false);
         }else if (blue.contains("ON")){
-            ringer.setChecked(true);
+            if(!bluetoothAdaper.isEnabled()){
+                bluetoothAdaper.enable();
+            }
+            bluetooth.setChecked(true);
         }else{
+
 //            ringer.toggle();
         }
 
@@ -313,7 +320,7 @@ public class WiFiChatFragment extends Fragment {
                 layoutpars.screenBrightness = brightness / (float)255;
                 //Apply attribute changes to this window
                 window.setAttributes(layoutpars);
-                chatManager.write((Integer.toString(brightness)).getBytes());
+//                chatManager.write((Integer.toString(brightness)).getBytes());
 
             }
 
@@ -333,7 +340,7 @@ public class WiFiChatFragment extends Fragment {
                 if(progress<=1)
                 {
                     //Set the brightness to 20
-                    brightness=10;
+                    brightness=5;
                 }
                 else //brightness is greater than 20
                 {
